@@ -1,24 +1,223 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Telegram Mini App</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>تطبيق تحديقة </title>
+    <style>
+        /* General Styles */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #1e1e1e;
+            color: #ffffff;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        #app {
+            width: 100%;
+            max-width: 400px;
+            background-color: #2c2c2c;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        h1 {
+            text-align: center;
+            padding: 20px;
+            background-color: #ff6f61;
+            margin: 0;
+            font-size: 24px;
+        }
+
+        #user-info {
+            padding: 20px;
+        }
+
+        #user-info p {
+            margin: 10px 0;
+            font-size: 16px;
+        }
+
+        #user-info strong {
+            color: #ff6f61;
+        }
+
+        #results {
+            padding: 20px;
+        }
+
+        .profile-card {
+            background-color: #3a3a3a;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            transition: transform 0.2s;
+        }
+
+        .profile-card:hover {
+            transform: scale(1.02);
+        }
+
+        .profile-card img {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            margin-left: 15px;
+        }
+
+        .profile-card .details {
+            flex: 1;
+        }
+
+        .profile-card .details h3 {
+            margin: 0;
+            font-size: 18px;
+            color: #ff6f61;
+        }
+
+        .profile-card .details p {
+            margin: 5px 0;
+            font-size: 14px;
+            color: #ccc;
+        }
+
+        .profile-card .actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .profile-card .actions button {
+            background-color: #ff6f61;
+            border: none;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .profile-card .actions button:hover {
+            background-color: #e65a50;
+        }
+
+        #searchButton {
+            display: block;
+            width: 90%;
+            margin: 20px auto;
+            padding: 12px;
+            background-color: #ff6f61;
+            border: none;
+            color: white;
+            border-radius: 10px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        #searchButton:hover {
+            background-color: #e65a50;
+        }
+    </style>
 </head>
 <body>
     <div id="app">
-        <h1>Welcome to the Mini App!</h1>
+        <h1>مرحبًا في تحديقة </h1>
         <div id="user-info">
-            <p><strong>Username:</strong> <span id="username">Loading...</span></p>
-            <p><strong>Name:</strong> <span id="name">Loading...</span></p>
-            <p><strong>Age:</strong> <span id="age">Loading...</span></p>
-            <p><strong>Bio:</strong> <span id="bio">Loading...</span></p>
-            <p><strong>Type:</strong> <span id="type">Loading...</span></p>
+            <p><strong>اسم المستخدم:</strong> <span id="username">جار التحميل...</span></p>
+            <p><strong>الاسم:</strong> <span id="name">جار التحميل...</span></p>
+            <p><strong>العمر:</strong> <span id="age">جار التحميل...</span></p>
+            <p><strong>نبذة:</strong> <span id="bio">جار التحميل...</span></p>
+            <p><strong>النوع:</strong> <span id="type">جار التحميل...</span></p>
         </div>
-        <button id="sendDataButton">Send Data to Bot</button>
+        <button id="searchButton">بحث عن مستخدمين قريبين</button>
+        <div id="results"></div>
     </div>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <script src="script.js"></script>
+
+    <script>
+        // Initialize the Telegram Web App
+        const tg = window.Telegram.WebApp;
+
+        // Expand the Mini App to full screen
+        tg.expand();
+
+        // Fetch user data from the bot's backend
+        async function fetchUserData() {
+            try {
+                const response = await fetch('/api/user', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                });
+                const data = await response.json();
+                if (data) {
+                    document.getElementById('username').textContent = data.username || 'غير متوفر';
+                    document.getElementById('name').textContent = data.name || 'غير متوفر';
+                    document.getElementById('age').textContent = data.age || 'غير متوفر';
+                    document.getElementById('bio').textContent = data.bio || 'غير متوفر';
+                    document.getElementById('type').textContent = data.type || 'غير متوفر';
+                }
+            } catch (error) {
+                console.error('حدث خطأ أثناء جلب بيانات المستخدم:', error);
+            }
+        }
+
+        // Fetch nearby users from the bot's backend
+        async function fetchNearbyUsers() {
+            try {
+                const response = await fetch('/api/nearby-users', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                });
+                const data = await response.json();
+                const resultsDiv = document.getElementById('results');
+                resultsDiv.innerHTML = '<h2 style="text-align: center; color: #ff6f61;">المستخدمون القريبون</h2>';
+                if (data && data.length > 0) {
+                    data.forEach(user => {
+                        resultsDiv.innerHTML += `
+                            <div class="profile-card">
+                                <img src="${user.photo || 'https://via.placeholder.com/60'}" alt="صورة المستخدم">
+                                <div class="details">
+                                    <h3>${user.name}</h3>
+                                    <p>العمر: ${user.age}</p>
+                                    <p>النوع: ${user.type}</p>
+                                    <p>المسافة: ${user.distance} كم</p>
+                                </div>
+                                <div class="actions">
+                                    <button>مراسلة</button>
+                                    <button>إعجاب</button>
+                                </div>
+                            </div>
+                        `;
+                    });
+                } else {
+                    resultsDiv.innerHTML = '<p style="text-align: center; color: #ccc;">لا يوجد مستخدمون قريبون.</p>';
+                }
+            } catch (error) {
+                console.error('حدث خطأ أثناء جلب المستخدمين القريبين:', error);
+            }
+        }
+
+        // Fetch user data when the Mini App loads
+        fetchUserData();
+
+        // Handle the "Search Nearby Users" button click
+        document.getElementById('searchButton').addEventListener('click', () => {
+            fetchNearbyUsers();
+        });
+
+        // Handle the event when the Mini App is ready
+        tg.ready();
+    </script>
 </body>
 </html>
