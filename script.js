@@ -1,42 +1,38 @@
-// Sample Data (Replace with API calls to your bot's backend)
-const profiles = [
-  {
-    name: "Ahmed",
-    age: 25,
-    bio: "مهندس برمجيات",
-    distance: "2.3 كم",
-    photo: "https://via.placeholder.com/150",
-  },
-  {
-    name: "Sara",
-    age: 30,
-    bio: "طبيبة",
-    distance: "5.7 كم",
-    photo: "https://via.placeholder.com/150",
-  },
-];
+// API Endpoints (Replace with your bot's backend URLs)
+const API_BASE_URL = "https://your-backend-api.com";
+const PROFILES_ENDPOINT = `${API_BASE_URL}/profiles`;
+const ADMIN_PROFILES_ENDPOINT = `${API_BASE_URL}/admin/profiles`;
 
-const adminProfiles = [
-  {
-    name: "Ahmed",
-    age: 25,
-    bio: "مهندس برمجيات",
-    location: "30.0444,31.2357",
-    photo: "https://via.placeholder.com/150",
-  },
-  {
-    name: "Sara",
-    age: 30,
-    bio: "طبيبة",
-    location: "30.0444,31.2357",
-    photo: "https://via.placeholder.com/150",
-  },
-];
+// Fetch Profiles
+async function fetchProfiles() {
+  try {
+    const response = await fetch(PROFILES_ENDPOINT);
+    if (!response.ok) throw new Error("Failed to fetch profiles");
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching profiles:", error);
+    return [];
+  }
+}
+
+// Fetch Admin Profiles
+async function fetchAdminProfiles() {
+  try {
+    const response = await fetch(ADMIN_PROFILES_ENDPOINT);
+    if (!response.ok) throw new Error("Failed to fetch admin profiles");
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching admin profiles:", error);
+    return [];
+  }
+}
 
 // Load Profiles
-function loadProfiles() {
+async function loadProfiles() {
   const profilesContainer = document.querySelector(".profiles-container");
   profilesContainer.innerHTML = "";
+
+  const profiles = await fetchProfiles();
 
   profiles.forEach((profile) => {
     const profileCard = document.createElement("div");
@@ -48,7 +44,7 @@ function loadProfiles() {
         <h2 class="profile-name">${profile.name}</h2>
         <p class="profile-age">${profile.age} سنة</p>
         <p class="profile-bio">${profile.bio}</p>
-        <p class="profile-distance">${profile.distance}</p>
+        <p class="profile-distance">${profile.distance} كم</p>
       </div>
       <div class="profile-actions">
         <button class="like-button">👍</button>
@@ -61,9 +57,11 @@ function loadProfiles() {
 }
 
 // Load Admin Profiles
-function loadAdminProfiles() {
+async function loadAdminProfiles() {
   const adminProfilesList = document.getElementById("admin-profiles-list");
   adminProfilesList.innerHTML = "";
+
+  const adminProfiles = await fetchAdminProfiles();
 
   adminProfiles.forEach((profile) => {
     const adminProfile = document.createElement("div");
@@ -78,14 +76,66 @@ function loadAdminProfiles() {
         <p class="profile-location"><a href="https://www.google.com/maps?q=${profile.location}" target="_blank">فتح في خرائط جوجل</a></p>
       </div>
       <div class="admin-actions">
-        <button class="ban-button">❌ حظر</button>
-        <button class="freeze-button">❄️ تجميد</button>
-        <button class="promote-button">⭐ ترقية</button>
+        <button class="ban-button" data-user-id="${profile.id}">❌ حظر</button>
+        <button class="freeze-button" data-user-id="${profile.id}">❄️ تجميد</button>
+        <button class="promote-button" data-user-id="${profile.id}">⭐ ترقية</button>
       </div>
     `;
 
     adminProfilesList.appendChild(adminProfile);
   });
+
+  // Add event listeners for admin actions
+  document.querySelectorAll(".ban-button").forEach((button) => {
+    button.addEventListener("click", () => banUser(button.dataset.userId));
+  });
+
+  document.querySelectorAll(".freeze-button").forEach((button) => {
+    button.addEventListener("click", () => freezeUser(button.dataset.userId));
+  });
+
+  document.querySelectorAll(".promote-button").forEach((button) => {
+    button.addEventListener("click", () => promoteUser(button.dataset.userId));
+  });
+}
+
+// Ban User
+async function banUser(userId) {
+  try {
+    const response = await fetch(`${API_BASE_URL}/admin/ban/${userId}`, { method: "POST" });
+    if (!response.ok) throw new Error("Failed to ban user");
+    alert("User banned successfully");
+    loadAdminProfiles(); // Refresh admin profiles
+  } catch (error) {
+    console.error("Error banning user:", error);
+    alert("Failed to ban user");
+  }
+}
+
+// Freeze User
+async function freezeUser(userId) {
+  try {
+    const response = await fetch(`${API_BASE_URL}/admin/freeze/${userId}`, { method: "POST" });
+    if (!response.ok) throw new Error("Failed to freeze user");
+    alert("User frozen successfully");
+    loadAdminProfiles(); // Refresh admin profiles
+  } catch (error) {
+    console.error("Error freezing user:", error);
+    alert("Failed to freeze user");
+  }
+}
+
+// Promote User
+async function promoteUser(userId) {
+  try {
+    const response = await fetch(`${API_BASE_URL}/admin/promote/${userId}`, { method: "POST" });
+    if (!response.ok) throw new Error("Failed to promote user");
+    alert("User promoted successfully");
+    loadAdminProfiles(); // Refresh admin profiles
+  } catch (error) {
+    console.error("Error promoting user:", error);
+    alert("Failed to promote user");
+  }
 }
 
 // Open Admin Panel
