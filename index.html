@@ -1,69 +1,24 @@
-// index.html
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تحديقة</title>
+    <title>Telegram Mini App</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="container">
-        <h1>مرحبا بك في تحديقة</h1>
-        <button id="start-chat">ابدأ الدردشة</button>
+    <div id="app">
+        <h1>Welcome to the Mini App!</h1>
+        <div id="user-info">
+            <p><strong>Username:</strong> <span id="username">Loading...</span></p>
+            <p><strong>Name:</strong> <span id="name">Loading...</span></p>
+            <p><strong>Age:</strong> <span id="age">Loading...</span></p>
+            <p><strong>Bio:</strong> <span id="bio">Loading...</span></p>
+            <p><strong>Type:</strong> <span id="type">Loading...</span></p>
+        </div>
+        <button id="sendDataButton">Send Data to Bot</button>
     </div>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
-
-// styles.css
-body {
-    font-family: Arial, sans-serif;
-    display: flex;
-    height: 100vh;
-    align-items: center;
-    justify-content: center;
-    background-color: #f0f0f0;
-    direction: rtl;
-}
-.container {
-    text-align: center;
-    background: #fff;
-    padding: 20px;
-    border-radius: 12px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-}
-
-// script.js
-document.getElementById('start-chat').addEventListener('click', () => {
-    window.location.href = 'https://jitsi.example.com/ta7diga'; // Placeholder Jitsi link
-});
-
-// server.js
-const express = require('express');
-const path = require('path');
-const app = express();
-
-app.use(express.static(path.join(__dirname)));
-
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
-});
-
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-});
-
-// package.json
-{
-    "name": "ta7diga-mini-app",
-    "version": "1.0.0",
-    "main": "server.js",
-    "scripts": {
-        "start": "node server.js"
-    },
-    "dependencies": {
-        "express": "^4.18.2"
-    }
-}
