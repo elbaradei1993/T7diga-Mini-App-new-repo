@@ -4,7 +4,7 @@ const path = require("path");
 const app = express();
 const PORT = process.env.PORT || 8080;
 
-// Serve static files from the "public" directory
+// Serve static files from the root directory
 app.use(express.static(path.join(__dirname)));
 
 // Start the server
