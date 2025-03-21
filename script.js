@@ -1,5 +1,5 @@
 // API Endpoints (Replace with your bot's backend URLs)
-const API_BASE_URL = "https://your-backend-api.com";
+const API_BASE_URL = "https://t.me/Ta7digaBot/Ta7diga";
 const PROFILES_ENDPOINT = `${API_BASE_URL}/profiles`;
 const ADMIN_PROFILES_ENDPOINT = `${API_BASE_URL}/admin/profiles`;
 
