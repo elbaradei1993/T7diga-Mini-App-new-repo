@@ -2,9 +2,9 @@
   "name": "ta7diga-mini-app",
   "version": "1.0.0",
   "scripts": {
-    "start": "serve -s -l $PORT"
+    "start": "node server.js"
   },
   "dependencies": {
-    "serve": "^14.0.0"
+    "express": "^4.18.2"
   }
 }
