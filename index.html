@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ta7diga Mini App</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Header -->
+    <header class="app-header">
+      <h1>Ta7diga</h1>
+      <button id="admin-panel" class="admin-button">Admin Panel</button>
+    </header>
+
+    <!-- User Profiles -->
+    <div class="profiles-container">
+      <!-- Profiles will be loaded dynamically -->
+    </div>
+
+    <!-- Admin Panel (Hidden by Default) -->
+    <div id="admin-panel-modal" class="modal">
+      <div class="modal-content">
+        <h2>Admin Panel</h2>
+        <div id="admin-profiles-list">
+          <!-- Admin profiles will be loaded here -->
+        </div>
+        <button id="close-admin-panel" class="close-button">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
